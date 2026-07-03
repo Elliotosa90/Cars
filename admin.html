@@ -750,10 +750,140 @@
                     <th>Status</th>
                     <th>Date</th>
                     <th>Actions</th>
-                </tr></thead>
+             </tr></thead>
                 <tbody>${sorted.map(o => `
                     <tr>
                         <td style="font-family:monospace;font-size:12px;color:var(--gold);">${o.trackingNumber}</td>
                         <td>${o.customer?.name || '-'}</td>
-                       
-$$
+                        <td style="font-size:12px;">${o.customer?.email || '-'}</td>
+                        <td>$${(o.total||0).toLocaleString()}</td>
+                        <td style="font-size:12px;">${o.paymentMethod === 'crypto' ? 'Crypto' : 'Pay on Delivery'}</td>
+                        <td><span class="badge badge-${o.status === 'awaiting_confirmation' ? 'awaiting' : o.status}">${o.status === 'awaiting_confirmation' ? 'Awaiting Conf' : o.status}</span></td>
+                        <td style="font-size:12px;color:var(--text-muted);">${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '-'}</td>
+                        <td class="actions-cell">
+                            ${o.status === 'pending' ? `<button class="btn btn-success btn-xs" onclick="confirmPayment('${o.id}')"><i class="fas fa-check"></i> Confirm</button>` : ''}
+                            ${o.status === 'awaiting_confirmation' ? `<button class="btn btn-success btn-xs" onclick="confirmPayment('${o.id}')"><i class="fas fa-check"></i> Confirm</button>` : ''}
+                            ${o.status === 'confirmed' ? `<button class="btn btn-info btn-xs" onclick="updateShipping('${o.id}')"><i class="fas fa-truck"></i> Ship</button>` : ''}
+                            ${o.status === 'shipped' ? `<button class="btn btn-success btn-xs" onclick="markDelivered('${o.id}')"><i class="fas fa-home"></i> Deliver</button>` : ''}
+                            ${o.status !== 'cancelled' && o.status !== 'delivered' ? `<button class="btn btn-danger btn-xs" onclick="cancelOrder('${o.id}')"><i class="fas fa-times"></i> Cancel</button>` : ''}
+                            <button class="btn btn-outline btn-xs" onclick="viewOrder('${o.id}')"><i class="fas fa-eye"></i></button>
+                        </td>
+                    </tr>
+                `).join('')}</tbody>
+            </table>`;
+        }
+
+        // ============================================================
+        // ORDER ACTIONS
+        // ============================================================
+        function confirmPayment(orderId) {
+            if (!confirm('Confirm payment for this order? Order will be marked as confirmed.')) return;
+            let orders = getOrders();
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx === -1) return;
+            orders[idx].status = 'confirmed';
+            orders[idx].paymentStatus = 'paid';
+            saveOrders(orders);
+            renderAdminOrders();
+            refreshDashboard();
+            showToast('Payment confirmed! Order is now confirmed.', 'success');
+        }
+
+        function updateShipping(orderId) {
+            const info = prompt('Enter shipping/delivery information:');
+            if (info === null) return;
+            let orders = getOrders();
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx === -1) return;
+            orders[idx].status = 'shipped';
+            orders[idx].shippingInfo = info;
+            saveOrders(orders);
+            renderAdminOrders();
+            refreshDashboard();
+            showToast('Order marked as shipped!', 'success');
+        }
+
+        function markDelivered(orderId) {
+            if (!confirm('Mark this order as delivered?')) return;
+            let orders = getOrders();
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx === -1) return;
+            orders[idx].status = 'delivered';
+            orders[idx].deliveryDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            saveOrders(orders);
+            renderAdminOrders();
+            refreshDashboard();
+            showToast('Order marked as delivered!', 'success');
+        }
+
+        function cancelOrder(orderId) {
+            if (!confirm('Are you sure you want to cancel this order? This cannot be undone.')) return;
+            let orders = getOrders();
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx === -1) return;
+            orders[idx].status = 'cancelled';
+            saveOrders(orders);
+            renderAdminOrders();
+            refreshDashboard();
+            showToast('Order has been cancelled.', 'info');
+        }
+
+        function viewOrder(orderId) {
+            const orders = getOrders();
+            const o = orders.find(x => x.id === orderId);
+            if (!o) return;
+            
+            const details = `
+Order Tracking: ${o.trackingNumber}
+Customer: ${o.customer?.name || '-'}
+Email: ${o.customer?.email || '-'}
+Phone: ${o.customer?.phone || '-'}
+Address: ${o.customer?.address || '-'}, ${o.customer?.country || '-'}
+Payment: ${o.paymentMethod} | Status: ${o.paymentStatus}
+Order Status: ${o.status}
+Total: $${(o.total||0).toLocaleString()}
+Date: ${o.createdAt ? new Date(o.createdAt).toLocaleString() : '-'}
+Items: ${(o.items||[]).map(i => `${i.name} x${i.qty} = $${(i.price*i.qty).toLocaleString()}`).join(', ')}
+Shipping Info: ${o.shippingInfo || 'Not updated'}
+Delivery Date: ${o.deliveryDate || 'Pending'}
+            `;
+            alert(details);
+        }
+
+        // ============================================================
+        // SETTINGS
+        // ============================================================
+        function loadSettingsForm() {
+            const s = getSettings();
+            document.getElementById('setAnnouncement').value = s.announcement || '';
+            document.getElementById('setWallet').value = s.walletAddress || '';
+            document.getElementById('setQR').value = s.qrImage || '';
+            document.getElementById('setEmail').value = s.email || '';
+            document.getElementById('setPhone').value = s.phone || '';
+            document.getElementById('setAddress').value = s.address || '';
+        }
+
+        function saveAllSettings() {
+            const s = {
+                announcement: document.getElementById('setAnnouncement').value.trim() || DEFAULT_SETTINGS.announcement,
+                walletAddress: document.getElementById('setWallet').value.trim() || DEFAULT_SETTINGS.walletAddress,
+                qrImage: document.getElementById('setQR').value.trim() || '',
+                email: document.getElementById('setEmail').value.trim() || DEFAULT_SETTINGS.email,
+                phone: document.getElementById('setPhone').value.trim() || DEFAULT_SETTINGS.phone,
+                address: document.getElementById('setAddress').value.trim() || DEFAULT_SETTINGS.address
+            };
+            saveSettings(s);
+            showToast('All settings saved successfully!', 'success');
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        function init() {
+            refreshDashboard();
+            updateCounts();
+        }
+        init();
+    </script>
+</body>
+</html>
