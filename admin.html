@@ -7,7 +7,6 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.4.4/qrcode.min.js"></script>
     <style>
         :root {
             --primary: #c0392b; --primary-dark: #a93226; --primary-light: #e74c3c;
@@ -55,6 +54,7 @@
             height:100vh;
             z-index:100;
             flex-shrink:0;
+            overflow-y:auto;
         }
         .sidebar .logo {
             display:flex; align-items:center; gap:10px;
@@ -66,7 +66,7 @@
         .sidebar .logo .icon { width:36px; height:36px; background:linear-gradient(135deg,var(--primary),var(--gold)); border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; }
         .sidebar .logo span { color:var(--gold); }
         .sidebar .logo small { display:block; font-size:10px; font-family:var(--font-primary); color:var(--text-muted); font-weight:400; margin-top:-2px; }
-        .nav-items { flex:1; overflow-y:auto; padding:0 12px; }
+        .nav-items { flex:1; padding:0 12px; }
         .nav-item {
             display:flex; align-items:center; gap:12px;
             padding:12px 16px;
@@ -76,9 +76,10 @@
             color:var(--text-muted);
             transition:var(--transition);
             margin-bottom:4px;
+            cursor:pointer;
         }
         .nav-item:hover { background:rgba(255,255,255,0.04); color:var(--text); }
-        .nav-item.active { background:rgba(212,168,67,0.1); color:var(--gold); }
+        .nav-item.active { background:rgba(212,168,67,0.12); color:var(--gold); }
         .nav-item i { width:20px; text-align:center; font-size:16px; }
         .nav-item .count {
             margin-left:auto;
@@ -225,10 +226,9 @@
         .btn-danger { background:var(--danger); color:#fff; }
         .btn-danger:hover { background:#c0392b; }
         .btn-success { background:var(--success); color:#fff; }
+        .btn-success:hover { background:#219a52; }
         .btn-info { background:var(--info); color:#fff; }
         .btn-info:hover { background:#2980b9; }
-        
-        .btn-success:hover { background:#219a52; }
         .btn-outline { background:transparent; border:1px solid rgba(255,255,255,0.15); color:var(--text); }
         .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
         .btn-sm { padding:8px 16px; font-size:12px; }
@@ -338,7 +338,7 @@
 </head>
 <body>
 
-    <!-- SIDEBAR -->
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="logo">
             <div class="icon"><i class="fas fa-car-side"></i></div>
@@ -370,14 +370,14 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
+    <!-- ===== MAIN CONTENT ===== -->
     <div class="main">
         <div class="main-header">
             <h1><span>Admin</span> Dashboard</h1>
             <a href="index.html" class="store-link" target="_blank"><i class="fas fa-store"></i> View Storefront</a>
         </div>
 
-        <!-- DASHBOARD TAB -->
+        <!-- ===== TAB: DASHBOARD ===== -->
         <div class="tab-content active" id="tab-dashboard">
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-card"><div class="num" id="statProducts">0</div><div class="label">Products</div></div>
@@ -392,7 +392,7 @@
             </div>
         </div>
 
-        <!-- PRODUCTS TAB -->
+        <!-- ===== TAB: PRODUCTS ===== -->
         <div class="tab-content" id="tab-products">
             <div class="card">
                 <h3><i class="fas fa-plus-circle"></i> Add / Edit Product</h3>
@@ -443,7 +443,7 @@
             </div>
         </div>
 
-        <!-- ORDERS TAB -->
+        <!-- ===== TAB: ORDERS ===== -->
         <div class="tab-content" id="tab-orders">
             <div class="card">
                 <h3><i class="fas fa-filter"></i> All Orders</h3>
@@ -451,12 +451,12 @@
             </div>
         </div>
 
-        <!-- SETTINGS TAB -->
+        <!-- ===== TAB: SETTINGS ===== -->
         <div class="tab-content" id="tab-settings">
             <div class="card">
                 <h3><i class="fas fa-bullhorn"></i> Announcement</h3>
                 <div class="form-row">
-                    <label>Special Announcement</label>
+                    <label>Special Announcement Text</label>
                     <input type="text" id="setAnnouncement" placeholder="FREE DELIVERY on all orders over $50,000" />
                     <div class="helper">This message appears at the top of the storefront.</div>
                 </div>
@@ -467,12 +467,12 @@
                 <div class="settings-grid">
                     <div class="form-row">
                         <label>Wallet Address</label>
-                        <input type="text" id="setWallet" placeholder="bc1q..." />
+                        <input type="text" id="setWallet" placeholder="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" />
                     </div>
                     <div class="form-row">
                         <label>QR Code Image URL (optional)</label>
-                        <input type="url" id="setQR" placeholder="https://example.com/qr.png" />
-                        <div class="helper">Leave empty for auto-generated QR code.</div>
+                        <input type="url" id="setQR" placeholder="https://example.com/qr-code.png" />
+                        <div class="helper">Leave empty for auto-generated QR code via API.</div>
                     </div>
                 </div>
             </div>
@@ -481,7 +481,7 @@
                 <h3><i class="fas fa-address-card"></i> Contact & Business Information</h3>
                 <div class="settings-grid">
                     <div class="form-row">
-                        <label>Email Address</label>
+                        <label>Business Email</label>
                         <input type="email" id="setEmail" placeholder="support@luxauto.com" />
                     </div>
                     <div class="form-row">
@@ -503,19 +503,21 @@
 
     <script>
         // ============================================================
-        // DATA LAYER
+        // DATA LAYER — Full CRUD with localStorage
         // ============================================================
         const KEYS = {
             products: 'luxauto_products',
             orders: 'luxauto_orders',
             settings: 'luxauto_settings'
         };
+
         const DEFAULT_PRODUCTS = [
             { id:'p1', name:'Lamborghini Huracán EVO', model:'2026', mileage:'0 mi', fuel:'Gasoline', image:'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80', price:289000, description:'V10 engine, 631 hp, 0-60 in 2.9s' },
             { id:'p2', name:'Porsche 911 Turbo S', model:'2025', mileage:'120 mi', fuel:'Gasoline', image:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80', price:207000, description:'Twin-turbo flat-6, 640 hp, AWD' },
             { id:'p3', name:'Mercedes-AMG GT 63 S', model:'2026', mileage:'50 mi', fuel:'Gasoline', image:'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80', price:185000, description:'V8 biturbo, 630 hp, 4MATIC+' },
             { id:'p4', name:'Rolls-Royce Ghost', model:'2025', mileage:'200 mi', fuel:'Gasoline', image:'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?w=800&q=80', price:365000, description:'V12 engine, 563 hp, Bespoke luxury' }
         ];
+
         const DEFAULT_SETTINGS = {
             announcement:'🏆 FREE DELIVERY on all orders over $50,000 — Limited Time Offer!',
             walletAddress:'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
@@ -528,12 +530,27 @@
         function getStore(k) {
             try {
                 const d = localStorage.getItem(k);
-                if (k === KEYS.products && !d) { localStorage.setItem(k, JSON.stringify(DEFAULT_PRODUCTS)); return DEFAULT_PRODUCTS; }
-                if (k === KEYS.settings && !d) { localStorage.setItem(k, JSON.stringify(DEFAULT_SETTINGS)); return DEFAULT_SETTINGS; }
-                return d ? JSON.parse(d) : (k === KEYS.orders ? [] : {});
-            } catch(e) { return k === KEYS.orders ? [] : DEFAULT_PRODUCTS; }
+                if (k === KEYS.products && d === null) {
+                    localStorage.setItem(k, JSON.stringify(DEFAULT_PRODUCTS));
+                    return DEFAULT_PRODUCTS;
+                }
+                if (k === KEYS.settings && d === null) {
+                    localStorage.setItem(k, JSON.stringify(DEFAULT_SETTINGS));
+                    return DEFAULT_SETTINGS;
+                }
+                if (d === null) return k === KEYS.orders ? [] : {};
+                return JSON.parse(d);
+            } catch(e) {
+                console.error("getStore error", e);
+                if (k === KEYS.products) return DEFAULT_PRODUCTS;
+                if (k === KEYS.settings) return DEFAULT_SETTINGS;
+                return [];
+            }
         }
-        function setStore(k,v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+        function setStore(k, v) {
+            localStorage.setItem(k, JSON.stringify(v));
+        }
 
         function getProducts() { return getStore(KEYS.products); }
         function getOrders() { return getStore(KEYS.orders); }
@@ -543,16 +560,21 @@
         function saveSettings(s) { setStore(KEYS.settings, s); }
 
         // ============================================================
-        // TOAST
+        // TOAST NOTIFICATIONS
         // ============================================================
-        function showToast(msg, type='info') {
+        function showToast(msg, type = 'info') {
             const c = document.getElementById('toastContainer');
-            const icons = {success:'fa-check-circle', error:'fa-times-circle', info:'fa-info-circle'};
+            const icons = { success:'fa-check-circle', error:'fa-times-circle', info:'fa-info-circle' };
             const t = document.createElement('div');
-            t.className=`toast ${type}`;
-            t.innerHTML=`<i class="fas ${icons[type]||icons.info}"></i> ${msg}`;
+            t.className = `toast ${type}`;
+            t.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${msg}`;
             c.appendChild(t);
-            setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(50px)'; t.style.transition='all 0.3s'; setTimeout(()=>t.remove(),300); },3000);
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateX(50px)';
+                t.style.transition = 'all 0.3s';
+                setTimeout(() => t.remove(), 300);
+            }, 3000);
         }
 
         // ============================================================
@@ -560,9 +582,17 @@
         // ============================================================
         function switchTab(name) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab-${name}`).classList.add('active');
+            const tabEl = document.getElementById('tab-' + name);
+            if (tabEl) tabEl.classList.add('active');
+
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => { if(n.textContent.trim().toLowerCase().startsWith(name)) n.classList.add('active'); });
+            document.querySelectorAll('.nav-item').forEach(n => {
+                const txt = n.textContent.trim().toLowerCase();
+                if (txt === name || txt.startsWith(name)) {
+                    n.classList.add('active');
+                }
+            });
+
             if (name === 'dashboard') refreshDashboard();
             if (name === 'products') renderAdminProducts();
             if (name === 'orders') renderAdminOrders();
@@ -577,8 +607,10 @@
             const orders = getOrders();
             const totalOrders = orders.length;
             const pending = orders.filter(o => o.status === 'pending' || o.status === 'awaiting_confirmation').length;
-            const totalRev = orders.filter(o => o.status !== 'cancelled').reduce((s,o) => s + (o.total||0), 0);
-            const customers = new Set(orders.map(o => o.customer?.email)).size;
+            const totalRev = orders
+                .filter(o => o.status !== 'cancelled')
+                .reduce((s, o) => s + (o.total || 0), 0);
+            const customers = new Set(orders.map(o => o.customer ? o.customer.email : null).filter(Boolean)).size;
 
             document.getElementById('statProducts').textContent = products.length;
             document.getElementById('statOrders').textContent = totalOrders;
@@ -586,20 +618,20 @@
             document.getElementById('statRevenue').textContent = '$' + totalRev.toLocaleString();
             document.getElementById('statCustomers').textContent = customers;
 
-            // Recent orders table
+            // Recent orders table (last 5)
             const recent = [...orders].reverse().slice(0, 5);
             const container = document.getElementById('recentOrdersTable');
             if (recent.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);">No orders yet.</p>';
+                container.innerHTML = '<p style="color:var(--text-muted);">No orders yet. Orders will appear here once customers check out.</p>';
             } else {
                 container.innerHTML = `<table>
                     <thead><tr><th>Tracking</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
                     <tbody>${recent.map(o => `
                         <tr>
-                            <td style="font-family:monospace;font-size:12px;color:var(--gold);">${o.trackingNumber}</td>
-                            <td>${o.customer?.name || '-'}</td>
-                            <td>$${(o.total||0).toLocaleString()}</td>
-                            <td><span class="badge badge-${o.status === 'awaiting_confirmation' ? 'awaiting' : o.status}">${o.status}</span></td>
+                            <td style="font-family:monospace;font-size:12px;color:var(--gold);">${o.trackingNumber || 'N/A'}</td>
+                            <td>${o.customer ? o.customer.name || '-' : '-'}</td>
+                            <td>$${(o.total || 0).toLocaleString()}</td>
+                            <td><span class="badge badge-${o.status === 'awaiting_confirmation' ? 'awaiting' : (o.status || 'pending')}">${o.status || 'pending'}</span></td>
                             <td style="font-size:12px;color:var(--text-muted);">${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '-'}</td>
                         </tr>
                     `).join('')}</tbody>
@@ -616,7 +648,7 @@
         }
 
         // ============================================================
-        // PRODUCTS
+        // PRODUCTS — CRUD
         // ============================================================
         function renderAdminProducts() {
             const products = getProducts();
@@ -641,15 +673,20 @@
             `).join('');
         }
 
-        // Image preview
-        document.getElementById('prodImage').addEventListener('input', function() {
-            const url = this.value.trim();
-            const preview = document.getElementById('imagePreview');
-            if (url) {
-                preview.style.display = 'block';
-                document.getElementById('previewImg').src = url;
-            } else {
-                preview.style.display = 'none';
+        // Image preview live
+        document.addEventListener('DOMContentLoaded', function() {
+            const imgInput = document.getElementById('prodImage');
+            if (imgInput) {
+                imgInput.addEventListener('input', function() {
+                    const url = this.value.trim();
+                    const preview = document.getElementById('imagePreview');
+                    if (url) {
+                        preview.style.display = 'block';
+                        document.getElementById('previewImg').src = url;
+                    } else {
+                        preview.style.display = 'none';
+                    }
+                });
             }
         });
 
@@ -683,19 +720,39 @@
             }
 
             let products = getProducts();
+
             if (editId) {
-                // Edit existing
+                // UPDATE existing product
                 const idx = products.findIndex(p => p.id === editId);
                 if (idx !== -1) {
-                    products[idx] = { ...products[idx], name, image, price, model, mileage, fuel, description };
+                    products[idx] = {
+                        ...products[idx],
+                        name: name,
+                        image: image,
+                        price: price,
+                        model: model || products[idx].model,
+                        mileage: mileage || products[idx].mileage,
+                        fuel: fuel || products[idx].fuel,
+                        description: description || products[idx].description
+                    };
+                    showToast('Product updated successfully!', 'success');
                 }
-                showToast('Product updated successfully!', 'success');
             } else {
-                // New product
-                const newId = 'p' + Date.now();
-                products.push({ id: newId, name, image, price, model, mileage, fuel, description });
+                // CREATE new product
+                const newId = 'p' + Date.now() + Math.random().toString(36).substring(2, 6);
+                products.push({
+                    id: newId,
+                    name: name,
+                    image: image,
+                    price: price,
+                    model: model || '',
+                    mileage: mileage || '',
+                    fuel: fuel || '',
+                    description: description || ''
+                });
                 showToast('Product added successfully!', 'success');
             }
+
             saveProducts(products);
             resetProductForm();
             renderAdminProducts();
@@ -720,7 +777,8 @@
             document.getElementById('prodSaveBtnText').textContent = 'Update Product';
             document.getElementById('cancelEditBtn').style.display = 'inline-flex';
 
-            document.getElementById('tab-products').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Scroll to form
+            document.querySelector('#tab-products .card').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function deleteProduct(id) {
@@ -733,13 +791,13 @@
         }
 
         // ============================================================
-        // ORDERS
+        // ORDERS — Full Management
         // ============================================================
         function renderAdminOrders() {
             const orders = getOrders();
             const container = document.getElementById('ordersTable');
             if (orders.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);">No orders have been placed yet.</p>';
+                container.innerHTML = '<p style="color:var(--text-muted);">No orders have been placed yet. Orders will appear here once customers complete checkout on the storefront.</p>';
                 return;
             }
             const sorted = [...orders].reverse();
@@ -753,37 +811,38 @@
                     <th>Status</th>
                     <th>Date</th>
                     <th>Actions</th>
-             </tr></thead>
-                <tbody>${sorted.map(o => `
+                </tr></thead>
+                <tbody>${sorted.map(o => {
+                    const statusClass = o.status === 'awaiting_confirmation' ? 'awaiting' : (o.status || 'pending');
+                    const statusLabel = o.status === 'awaiting_confirmation' ? 'Awaiting Conf' : (o.status || 'pending');
+                    return `
                     <tr>
-                        <td style="font-family:monospace;font-size:12px;color:var(--gold);">${o.trackingNumber}</td>
-                        <td>${o.customer?.name || '-'}</td>
-                        <td style="font-size:12px;">${o.customer?.email || '-'}</td>
-                        <td>$${(o.total||0).toLocaleString()}</td>
+                        <td style="font-family:monospace;font-size:12px;color:var(--gold);">${o.trackingNumber || 'N/A'}</td>
+                        <td>${o.customer ? o.customer.name || '-' : '-'}</td>
+                        <td style="font-size:12px;">${o.customer ? o.customer.email || '-' : '-'}</td>
+                        <td>$${(o.total || 0).toLocaleString()}</td>
                         <td style="font-size:12px;">${o.paymentMethod === 'crypto' ? 'Crypto' : 'Pay on Delivery'}</td>
-                        <td><span class="badge badge-${o.status === 'awaiting_confirmation' ? 'awaiting' : o.status}">${o.status === 'awaiting_confirmation' ? 'Awaiting Conf' : o.status}</span></td>
+                        <td><span class="badge badge-${statusClass}">${statusLabel}</span></td>
                         <td style="font-size:12px;color:var(--text-muted);">${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : '-'}</td>
                         <td class="actions-cell">
-                            ${o.status === 'pending' ? `<button class="btn btn-success btn-xs" onclick="confirmPayment('${o.id}')"><i class="fas fa-check"></i> Confirm</button>` : ''}
-                            ${o.status === 'awaiting_confirmation' ? `<button class="btn btn-success btn-xs" onclick="confirmPayment('${o.id}')"><i class="fas fa-check"></i> Confirm</button>` : ''}
+                            ${(o.status === 'pending' || o.status === 'awaiting_confirmation') ? `<button class="btn btn-success btn-xs" onclick="confirmPayment('${o.id}')"><i class="fas fa-check"></i> Confirm Pay</button>` : ''}
                             ${o.status === 'confirmed' ? `<button class="btn btn-info btn-xs" onclick="updateShipping('${o.id}')"><i class="fas fa-truck"></i> Ship</button>` : ''}
                             ${o.status === 'shipped' ? `<button class="btn btn-success btn-xs" onclick="markDelivered('${o.id}')"><i class="fas fa-home"></i> Deliver</button>` : ''}
-                            ${o.status !== 'cancelled' && o.status !== 'delivered' ? `<button class="btn btn-danger btn-xs" onclick="cancelOrder('${o.id}')"><i class="fas fa-times"></i> Cancel</button>` : ''}
+                            ${(o.status !== 'cancelled' && o.status !== 'delivered') ? `<button class="btn btn-danger btn-xs" onclick="cancelOrder('${o.id}')"><i class="fas fa-times"></i> Cancel</button>` : ''}
                             <button class="btn btn-outline btn-xs" onclick="viewOrder('${o.id}')"><i class="fas fa-eye"></i></button>
                         </td>
-                    </tr>
-                `).join('')}</tbody>
+                    </tr>`;
+                }).join('')}</tbody>
             </table>`;
         }
 
-        // ============================================================
-        // ORDER ACTIONS
-        // ============================================================
+        // ---- ORDER ACTIONS ----
+
         function confirmPayment(orderId) {
-            if (!confirm('Confirm payment for this order? Order will be marked as confirmed.')) return;
+            if (!confirm('Confirm payment for this order? The order will be marked as "Confirmed".')) return;
             let orders = getOrders();
             const idx = orders.findIndex(o => o.id === orderId);
-            if (idx === -1) return;
+            if (idx === -1) { showToast('Order not found', 'error'); return; }
             orders[idx].status = 'confirmed';
             orders[idx].paymentStatus = 'paid';
             saveOrders(orders);
@@ -793,26 +852,28 @@
         }
 
         function updateShipping(orderId) {
-            const info = prompt('Enter shipping/delivery information:');
-            if (info === null) return;
+            const info = prompt('Enter shipping / delivery tracking information:');
+            if (info === null || info.trim() === '') return;
             let orders = getOrders();
             const idx = orders.findIndex(o => o.id === orderId);
-            if (idx === -1) return;
+            if (idx === -1) { showToast('Order not found', 'error'); return; }
             orders[idx].status = 'shipped';
-            orders[idx].shippingInfo = info;
+            orders[idx].shippingInfo = info.trim();
             saveOrders(orders);
             renderAdminOrders();
             refreshDashboard();
-            showToast('Order marked as shipped!', 'success');
+            showToast('Order marked as shipped with tracking info.', 'success');
         }
 
         function markDelivered(orderId) {
             if (!confirm('Mark this order as delivered?')) return;
             let orders = getOrders();
             const idx = orders.findIndex(o => o.id === orderId);
-            if (idx === -1) return;
+            if (idx === -1) { showToast('Order not found', 'error'); return; }
             orders[idx].status = 'delivered';
-            orders[idx].deliveryDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            orders[idx].deliveryDate = new Date().toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
             saveOrders(orders);
             renderAdminOrders();
             refreshDashboard();
@@ -820,10 +881,10 @@
         }
 
         function cancelOrder(orderId) {
-            if (!confirm('Are you sure you want to cancel this order? This cannot be undone.')) return;
+            if (!confirm('ARE YOU SURE you want to cancel this order? This cannot be undone.')) return;
             let orders = getOrders();
             const idx = orders.findIndex(o => o.id === orderId);
-            if (idx === -1) return;
+            if (idx === -1) { showToast('Order not found', 'error'); return; }
             orders[idx].status = 'cancelled';
             saveOrders(orders);
             renderAdminOrders();
@@ -834,20 +895,37 @@
         function viewOrder(orderId) {
             const orders = getOrders();
             const o = orders.find(x => x.id === orderId);
-            if (!o) return;
-            
+            if (!o) { showToast('Order not found', 'error'); return; }
+
+            const itemsStr = (o.items || []).map(i =>
+                `${i.name} x${i.qty} = $${(i.price * i.qty).toLocaleString()}`
+            ).join('\n');
+
             const details = `
-Order Tracking: ${o.trackingNumber}
-Customer: ${o.customer?.name || '-'}
-Email: ${o.customer?.email || '-'}
-Phone: ${o.customer?.phone || '-'}
-Address: ${o.customer?.address || '-'}, ${o.customer?.country || '-'}
-Payment: ${o.paymentMethod} | Status: ${o.paymentStatus}
+╔══════════════════════════════════╗
+║        ORDER DETAILS             ║
+╚══════════════════════════════════╝
+
+Tracking Number: ${o.trackingNumber || 'N/A'}
+Order Date: ${o.createdAt ? new Date(o.createdAt).toLocaleString() : 'N/A'}
 Order Status: ${o.status}
-Total: $${(o.total||0).toLocaleString()}
-Date: ${o.createdAt ? new Date(o.createdAt).toLocaleString() : '-'}
-Items: ${(o.items||[]).map(i => `${i.name} x${i.qty} = $${(i.price*i.qty).toLocaleString()}`).join(', ')}
-Shipping Info: ${o.shippingInfo || 'Not updated'}
+Payment Method: ${o.paymentMethod || 'N/A'}
+Payment Status: ${o.paymentStatus || 'N/A'}
+
+━ CUSTOMER INFO ━
+Name: ${o.customer ? o.customer.name : 'N/A'}
+Email: ${o.customer ? o.customer.email : 'N/A'}
+Phone: ${o.customer ? o.customer.phone : 'N/A'}
+Address: ${o.customer ? o.customer.address : 'N/A'}
+Country: ${o.customer ? o.customer.country : 'N/A'}
+
+━ ORDER ITEMS ━
+${itemsStr || 'No items'}
+
+Total: $${(o.total || 0).toLocaleString()}
+
+━ SHIPPING ━
+Info: ${o.shippingInfo || 'Not updated'}
 Delivery Date: ${o.deliveryDate || 'Pending'}
             `;
             alert(details);
@@ -876,7 +954,7 @@ Delivery Date: ${o.deliveryDate || 'Pending'}
                 address: document.getElementById('setAddress').value.trim() || DEFAULT_SETTINGS.address
             };
             saveSettings(s);
-            showToast('All settings saved successfully!', 'success');
+            showToast('All settings saved successfully! Settings are now live on the storefront.', 'success');
         }
 
         // ============================================================
@@ -886,7 +964,9 @@ Delivery Date: ${o.deliveryDate || 'Pending'}
             refreshDashboard();
             updateCounts();
         }
-        init();
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
