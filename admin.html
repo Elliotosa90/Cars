@@ -618,7 +618,7 @@ function saveSettings() {
     phone: document.getElementById('sph').value.trim(),
     address: document.getElementById('sa2').value.trim()
   };
-  refs.settings.set(s).then(function() {
+refs.settings.update(s).then(function() {
     toast('All settings saved!', 'success');
   }).catch(function(err) {
     toast('Error: ' + err.message, 'error');
