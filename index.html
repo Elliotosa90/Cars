@@ -806,26 +806,23 @@ function generateQR() {
   refs.settings.once('value').then(function(snap) {
     var s = snap.val() || {};
     var addr = s.walletAddress || 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh';
-    var qrImg = s.qrImage || '';  // <-- read the qrImage field
+    var qrImg = s.qrImage || '';
     document.getElementById('walletAddressDisplay').textContent = addr;
     var qrContainer = document.getElementById('qrcode');
     qrContainer.innerHTML = '';
 
-    // If an explicit QR image URL is set, use it
     if (qrImg) {
-      qrContainer.innerHTML = '<img src="' + qrImg + '" alt="QR Code" style="border-radius:12px;background:#fff;padding:8px;max-width:180px;height:auto;" />';
-      return;
-    }
-
-    // Fallback: generate QR from wallet address
-    try {
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(qrContainer, { text: addr, width: 180, height: 180, colorDark: '#d4a843', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
-      } else {
-        qrContainer.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(addr) + '" alt="QR Code" style="border-radius:12px;background:#fff;padding:8px;" />';
+      qrContainer.innerHTML = '<img src="' + qrImg + '" alt="QR" style="border-radius:12px;background:#fff;padding:8px;max-width:180px;height:auto;">';
+    } else {
+      try {
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(qrContainer, { text: addr, width: 180, height: 180, colorDark: '#d4a843', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+        } else {
+          qrContainer.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(addr) + '" alt="QR" style="border-radius:12px;background:#fff;padding:8px;">';
+        }
+      } catch(e) {
+        qrContainer.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(addr) + '" alt="QR" style="border-radius:12px;background:#fff;padding:8px;">';
       }
-    } catch(e) {
-      qrContainer.innerHTML = '<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(addr) + '" alt="QR Code" style="border-radius:12px;background:#fff;padding:8px;" />';
     }
   });
 }
